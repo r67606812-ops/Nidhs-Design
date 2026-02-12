@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#7c3aed">
+    <title>DESIGNFOLIO CRM</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-font-smoothing:antialiased}
+        :root{--b:#7c3aed;--b2:#a855f7;--b3:#c084fc;--bg:#faf9fb;--card:#fff;--text:#1a1a2e;--t2:#6b7280;--t3:#9ca3af;--brd:#f0eef2;--grn:#059669;--red:#dc2626;--amb:#d97706;--blu:#2563eb;--pnk:#ec4899;--sb:env(safe-area-inset-bottom,0px);--st:env(safe-area-inset-top,0px);--nh:72px;--hh:60px}
+        html{height:100%}
+        body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);height:100%;margin:0;font-size:14px;line-height:1.5;overflow:hidden}
+
+        #splash{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .3s,visibility .3s}
+        #splash.hide{opacity:0;visibility:hidden;pointer-events:none}
+        .slogo{width:68px;height:68px;background:linear-gradient(135deg,var(--b),var(--b2));border-radius:20px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:28px;margin-bottom:20px;animation:pulse 1.5s ease infinite}
+        @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+        .sbar{width:120px;height:4px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin-top:16px}
+        .sbar-in{width:40%;height:100%;background:linear-gradient(90deg,var(--b),var(--b2));border-radius:4px;animation:sload 1s ease infinite}
+        @keyframes sload{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
+
+        #setup{position:fixed;inset:0;background:linear-gradient(135deg,#f5f0ff,#faf5ff);z-index:9998;display:none;overflow-y:auto;-webkit-overflow-scrolling:touch}
+        .setup-in{min-height:100%;display:flex;align-items:center;justify-content:center;padding:24px 16px}
+        .setup-box{background:#fff;border-radius:24px;padding:32px 24px;width:100%;max-width:400px;box-shadow:0 8px 40px rgba(0,0,0,.06)}
+
+        #app{display:none;height:100%;flex-direction:column;overflow:hidden}
+        #app.show{display:flex}
+
+        .hdr{height:var(--hh);padding-top:var(--st);background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-bottom:1px solid var(--brd);display:flex;align-items:center;padding-left:16px;padding-right:16px;gap:12px;flex-shrink:0;z-index:50;min-height:var(--hh)}
+        .hdr-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--b),var(--b2));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:16px;flex-shrink:0;overflow:hidden}
+        .hdr-logo img{width:100%;height:100%;object-fit:cover}
+        .hdr-t{flex:1;font-weight:700;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .hdr-btn{width:36px;height:36px;border-radius:10px;border:none;background:var(--bg);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:var(--t2);transition:background .15s}
+        .hdr-btn:active{background:#e8e8ea;transform:scale(.95)}
+
+        .main{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;overscroll-behavior-y:contain;position:relative;min-height:0}
+        .main-in{padding:16px;padding-bottom:calc(var(--nh) + var(--sb) + 30px);max-width:800px;margin:0 auto}
+
+        .nav{position:fixed;bottom:0;left:0;right:0;height:calc(var(--nh) + var(--sb));padding-bottom:var(--sb);background:rgba(255,255,255,.95);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);border-top:1px solid var(--brd);display:flex;align-items:stretch;z-index:100}
+        .nav-b{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--t3);font-size:10px;font-weight:600;transition:color .15s;padding:8px 0}
+        .nav-b svg{width:22px;height:22px;flex-shrink:0}
+        .nav-b.on{color:var(--b)}
+        .nav-fab{width:52px;height:52px;background:linear-gradient(135deg,var(--b),var(--b2));border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;border:none;cursor:pointer;box-shadow:0 4px 20px rgba(124,58,237,.4);margin-top:-20px;align-self:flex-start;flex-shrink:0;transition:transform .15s}
+        .nav-fab:active{transform:scale(.92)}
+        .nav-fab svg{width:26px;height:26px;flex-shrink:0}
+
+        .cd{background:var(--card);border-radius:16px;border:1px solid var(--brd);margin-bottom:12px;overflow:hidden}
+        .cd-p{padding:16px}
+
+        .fld{margin-bottom:14px}
+        .fld-l{display:block;font-size:11px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+        .fld-i{width:100%;padding:12px 14px;background:var(--bg);border:2px solid transparent;border-radius:12px;font-size:15px;font-weight:500;color:var(--text);outline:none;transition:all .15s;-webkit-appearance:none;appearance:none;font-family:inherit}
+        .fld-i:focus{background:#fff;border-color:var(--b);box-shadow:0 0 0 3px rgba(124,58,237,.1)}
+        .fld-i::placeholder{color:var(--t3);font-weight:400}
+        textarea.fld-i{resize:vertical;min-height:80px}
+        select.fld-i{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+
+        .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 20px;border-radius:12px;font-weight:600;font-size:14px;border:none;cursor:pointer;transition:all .15s;font-family:inherit;white-space:nowrap}
+        .btn:active{transform:scale(.97)}
+        .btn svg{width:16px;height:16px;flex-shrink:0}
+        .btn-b{background:linear-gradient(135deg,var(--b),var(--b2));color:#fff;box-shadow:0 4px 12px rgba(124,58,237,.3)}
+        .btn-g{background:var(--bg);color:var(--text)}
+        .btn-g:active{background:#e8e8ea}
+        .btn-o{background:transparent;border:1.5px solid var(--brd);color:var(--t2)}
+        .btn-o:active{background:var(--bg)}
+        .btn-gn{background:#ecfdf5;color:var(--grn)}
+        .btn-rd{background:#fef2f2;color:var(--red)}
+        .btn-s{padding:8px 12px;font-size:12px;border-radius:8px;gap:4px}
+        .btn-s svg{width:14px;height:14px}
+        .btn-f{width:100%}
+        .btn-r{display:flex;gap:6px;flex-wrap:wrap}
+
+        .bg{display:inline-flex;align-items:center;padding:4px 10px;border-radius:50px;font-size:11px;font-weight:700}
+        .bg-g{background:#ecfdf5;color:var(--grn)}
+        .bg-a{background:#fffbeb;color:var(--amb)}
+        .bg-r{background:#fef2f2;color:var(--red)}
+        .bg-b{background:rgba(124,58,237,.1);color:var(--b)}
+        .bg-bl{background:#eff6ff;color:var(--blu)}
+        .bg-pk{background:#fdf2f8;color:var(--pnk)}
+
+        .av{display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;border-radius:12px;flex-shrink:0}
+
+        .st{background:#fff;border-radius:16px;padding:16px;border:1px solid var(--brd)}
+        .st-ic{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+        .st-ic svg{width:20px;height:20px;flex-shrink:0}
+        .st-lb{font-size:11px;color:var(--t3);font-weight:600;margin-bottom:4px}
+        .st-vl{font-size:20px;font-weight:800}
+
+        /* STATUS PIPELINE */
+        .pipe{display:flex;gap:6px;overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+        .pipe::-webkit-scrollbar{display:none}
+        .pipe-i{flex-shrink:0;padding:8px 14px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid transparent;transition:all .15s;text-align:center;min-width:80px}
+        .pipe-i.on{border-color:var(--b);background:rgba(124,58,237,.08)}
+
+        /* PROJECT CARD */
+        .pj{background:var(--bg);border-radius:14px;padding:14px;margin-bottom:10px}
+        .pj:last-child{margin-bottom:0}
+        .pj-gr{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+        .pj-cl{background:#fff;padding:10px;border-radius:10px;text-align:center}
+        .pj-cl-l{font-size:9px;color:var(--t3);text-transform:uppercase;font-weight:700;letter-spacing:.3px}
+        .pj-cl-v{font-size:14px;font-weight:700;margin-top:2px}
+
+        /* DEADLINE */
+        .dl-bar{height:4px;border-radius:2px;background:#e5e7eb;overflow:hidden;margin-top:8px}
+        .dl-fill{height:100%;border-radius:2px;transition:width .3s}
+
+        .mo-bg{position:fixed;inset:0;background:rgba(0,0,0,.4);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);z-index:1000;display:none;animation:fi .2s}
+        .mo-bg.show{display:flex;align-items:flex-end;justify-content:center}
+        @keyframes fi{from{opacity:0}to{opacity:1}}
+        .mo-sh{background:#fff;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;-webkit-overflow-scrolling:touch;border-radius:24px 24px 0 0;padding:24px 20px calc(24px + var(--sb));animation:su .3s cubic-bezier(.32,.72,0,1)}
+        @keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
+        .mo-h{width:36px;height:4px;background:#e0e0e0;border-radius:4px;margin:0 auto 16px}
+        .mo-t{font-size:20px;font-weight:800;margin-bottom:4px}
+        .mo-s{font-size:13px;color:var(--t3);margin-bottom:20px}
+
+        .tst{position:fixed;bottom:calc(var(--nh) + var(--sb) + 16px);left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:14px;font-weight:600;font-size:13px;color:#fff;z-index:10000;animation:tp .3s cubic-bezier(.32,.72,0,1);box-shadow:0 8px 30px rgba(0,0,0,.15);white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+        @keyframes tp{from{opacity:0;transform:translate(-50%,20px) scale(.95)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+
+        .sy{position:fixed;top:0;left:0;right:0;height:3px;z-index:9999;background:linear-gradient(90deg,var(--b),var(--b2),var(--b));background-size:200% 100%;animation:ss .8s linear infinite}
+        @keyframes ss{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+        .hi{background:var(--bg);border-radius:10px;padding:10px 12px;margin-top:10px;border-left:3px solid var(--b)}
+        .hi-r{background:var(--bg);border-radius:10px;padding:10px 12px;margin-top:10px;border-left:3px solid var(--red)}
+        .hi-row{display:flex;align-items:center;justify-content:space-between;padding:6px 0;font-size:12px}
+        .hi-row+.hi-row{border-top:1px solid var(--brd)}
+        .hi-del{width:24px;height:24px;border-radius:6px;border:none;background:#fef2f2;color:var(--red);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+        .hi-del svg{width:12px;height:12px}
+
+        .emp{text-align:center;padding:48px 20px}
+        .emp-ic{width:64px;height:64px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+        .emp-ic svg{width:28px;height:28px;color:var(--t3)}
+
+        /* REVISION COUNTER */
+        .rev-cnt{display:flex;align-items:center;gap:8px}
+        .rev-btn{width:28px;height:28px;border-radius:8px;border:1.5px solid var(--brd);background:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:700;font-size:16px;color:var(--t2)}
+        .rev-btn:active{background:var(--bg)}
+        .rev-num{font-size:18px;font-weight:800;min-width:28px;text-align:center}
+
+        /* DELIVERABLES */
+        .dv-tag{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;background:rgba(124,58,237,.08);border:1px solid rgba(124,58,237,.15);border-radius:8px;font-size:11px;font-weight:600;color:var(--b);margin:3px}
+
+        svg{flex-shrink:0}
+        .ic{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;flex-shrink:0;vertical-align:middle}
+        .ic svg{width:100%;height:100%}
+        .ic-s{width:16px;height:16px}.ic-s svg{width:100%;height:100%}
+        .ic-xs{width:14px;height:14px}.ic-xs svg{width:100%;height:100%}
+        .ic-l{width:22px;height:22px}.ic-l svg{width:100%;height:100%}
+
+        .g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+        .g4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        .fb{display:flex;align-items:center;justify-content:space-between}
+        .fc{display:flex;align-items:center}
+        .f1{flex:1;min-width:0}
+        .trn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .tc{color:var(--b)}.tg{color:var(--grn)}.tr{color:var(--red)}.tm{color:var(--t2)}.tl{color:var(--t3)}.tbl{color:var(--blu)}
+        .ts{font-size:11px}.tsm{font-size:13px}.tlg{font-size:18px}
+        .fb7{font-weight:700}.fb8{font-weight:800}
+        .mb4{margin-bottom:4px}.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
+        .mt8{margin-top:8px}.mt12{margin-top:12px}
+        .srch-wrap{flex-shrink:0;padding:12px 16px}
+
+        /* STATUS COLORS */
+        .s-brief{background:#eff6ff;color:#2563eb}
+        .s-design{background:#f5f0ff;color:#7c3aed}
+        .s-review{background:#fffbeb;color:#d97706}
+        .s-revision{background:#fdf2f8;color:#ec4899}
+        .s-approved{background:#ecfdf5;color:#059669}
+        .s-delivered{background:#f0fdf4;color:#16a34a}
+        .s-cancelled{background:#fef2f2;color:#dc2626}
+
+        @media(min-width:768px){
+            :root{--nh:0px}
+            body{overflow:hidden}
+            #app{flex-direction:row;height:100vh}
+            .side{width:260px;height:100vh;background:#fff;border-right:1px solid var(--brd);flex-shrink:0;display:flex;flex-direction:column;padding:28px 16px;overflow-y:auto}
+            .side-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px;padding:0 8px}
+            .side-li{width:44px;height:44px;background:linear-gradient(135deg,var(--b),var(--b2));border-radius:14px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;flex-shrink:0;overflow:hidden}
+            .side-li img{width:100%;height:100%;object-fit:cover}
+            .side-bn{font-weight:800;font-size:16px}
+            .side-sb{font-size:11px;color:var(--t3)}
+            .side-nv{flex:1}
+            .side-bt{display:flex;align-items:center;gap:12px;width:100%;padding:12px 14px;border-radius:12px;border:none;background:none;color:var(--t2);font-weight:500;font-size:14px;cursor:pointer;transition:all .15s;font-family:inherit;margin-bottom:2px;text-align:left}
+            .side-bt:hover{background:var(--bg);color:var(--text)}
+            .side-bt.on{background:rgba(124,58,237,.08);color:var(--b)}
+            .side-bt svg{width:20px;height:20px;flex-shrink:0}
+            .side-ft{border-top:1px solid var(--brd);padding-top:16px;margin-top:16px}
+            .app-bd{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+            .nav{display:none!important}
+            .hdr{padding-left:24px;padding-right:24px;height:68px;min-height:68px}
+            .main-in{padding:24px;padding-bottom:24px;max-width:900px}
+            .st-vl{font-size:24px}
+            .g4{grid-template-columns:repeat(4,1fr)}
+            .mo-bg.show{align-items:center}
+            .mo-sh{border-radius:24px;max-width:540px;padding-bottom:24px}
+            .mob{display:none!important}
+            .dsk{display:flex!important}
+        }
+        @media(max-width:767px){
+            .side{display:none!important}.dsk{display:none!important}.mob{display:flex!important}
+            .app-bd{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;height:100%}
+            .main{flex:1;overflow-y:auto!important;overflow-x:hidden;-webkit-overflow-scrolling:touch;min-height:0!important;height:0}
+        }
+        @media(max-width:360px){.st-vl{font-size:16px}.main-in{padding:12px;padding-bottom:calc(var(--nh) + var(--sb) + 30px)}}
+    </style>
+</head>
+<body>
+
+<div id="splash">
+    <div class="slogo">D</div>
+    <div style="font-weight:800;font-size:18px;">DESIGNFOLIO</div>
+    <div style="font-size:12px;color:var(--t3);margin-top:4px;" id="splashText">Loading your studio...</div>
+    <div class="sbar"><div class="sbar-in"></div></div>
+</div>
+
+<div id="setup">
+    <div class="setup-in">
+        <div class="setup-box">
+            <div style="text-align:center;margin-bottom:28px;">
+                <div class="slogo" style="margin:0 auto 16px;animation:none;">D</div>
+                <div style="font-weight:800;font-size:22px;">Welcome to DesignFolio</div>
+                <div style="font-size:13px;color:var(--t3);margin-top:4px;">Your design studio CRM — Connect GitHub</div>
+            </div>
+            <div class="fld"><label class="fld-l">GitHub Username</label><input type="text" id="ghU" class="fld-i" placeholder="your-username" autocomplete="off"></div>
+            <div class="fld"><label class="fld-l">Repository Name</label><input type="text" id="ghR" class="fld-i" placeholder="my-design-crm" autocomplete="off"></div>
+            <div class="fld"><label class="fld-l">Personal Access Token</label><input type="password" id="ghT" class="fld-i" placeholder="ghp_xxxx" autocomplete="off"><div style="font-size:11px;color:var(--t3);margin-top:6px;"><a href="https://github.com/settings/tokens/new?scopes=repo" target="_blank" style="color:var(--b);font-weight:600;text-decoration:none;">Create token →</a></div></div>
+            <button onclick="testGH()" class="btn btn-g btn-f mb12">Test Connection</button>
+            <div id="tR" style="display:none;padding:12px;border-radius:10px;font-size:13px;font-weight:600;text-align:center;margin-bottom:12px;"></div>
+            <button onclick="conGH()" class="btn btn-b btn-f" id="conBtn">Launch Studio</button>
+        </div>
+    </div>
+</div>
+
+<div id="syB" class="sy" style="display:none;"></div>
+
+<div id="app">
+    <div class="side" id="sidebar"></div>
+    <div class="app-bd">
+        <div class="hdr" id="hdrBar"></div>
+        <div class="mob srch-wrap" id="srchB" style="display:none;"></div>
+        <div class="main" id="mainS"><div class="main-in" id="cnt"></div></div>
+    </div>
+    <nav class="nav" id="navBar"></nav>
+</div>
+
+<div id="mo" class="mo-bg" onclick="if(event.target===this)cMo()">
+    <div class="mo-sh" id="moC" onclick="event.stopPropagation()"></div>
+</div>
+
+<script>
+const FL='designfolio_crm.json';
+const PT=['Logo Design','Brand Identity','Social Media Kit','Packaging Design','Print Design','UI/UX Design','Illustration','Motion Graphics','Photo Editing','Presentation Design','Infographic','Banner/Ad Design','Other'];
+const PS=['Brief','Design','Review','Revision','Approved','Delivered','Cancelled'];
+const PM=['UPI','Cash','Bank Transfer','Cheque','Credit Card','Other'];
+const DL=['Logo Files (AI/EPS/SVG/PNG)','Brand Guidelines PDF','Social Media Templates','Business Card Design','Letterhead Design','Packaging Mockups','Website Mockups','App Screens','Print-Ready Files','Source Files','Presentation Deck','Video/Animation','Photo Edits','Raw Files','Other'];
+
+const SC={Brief:'s-brief',Design:'s-design',Review:'s-review',Revision:'s-revision',Approved:'s-approved',Delivered:'s-delivered',Cancelled:'s-cancelled'};
+
+function ic(svg,size){return'<span class="ic'+(size?' ic-'+size:'')+'">' + svg + '</span>'}
+
+const _={
+    grid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',
+    users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+    plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>',
+    pen:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 19 7-7 3 3-7 7-3-3z"/><path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="m2 2 7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>',
+    settings:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>',
+    refresh:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>',
+    x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+    check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    up:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+    dn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>',
+    clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    wallet:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>',
+    search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+    edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>',
+    trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>',
+    msg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>',
+    file:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>',
+    dl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+    ul:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
+    save:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>',
+    cloud:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>',
+    logout:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>',
+    warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+    palette:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>',
+    db:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5V19A9 3 0 0 0 21 19V5"/><path d="M3 12A9 3 0 0 0 21 12"/></svg>',
+    cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>',
+    layers:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83Z"/><path d="m22 17.65-9.17 4.16a2 2 0 0 1-1.66 0L2 17.65"/><path d="m22 12.65-9.17 4.16a2 2 0 0 1-1.66 0L2 12.65"/></svg>',
+    star:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+    rev:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>',
+    pkg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>',
+    list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>',
+    flag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>',
+    eye:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>'
+};
+
+let D={brand:{name:'DesignFolio',logo:null},clients:[]};
+let gh=null,sha=null,pg='dash',sq='',sf='all';
+
+const $=id=>document.getElementById(id);
+const inr=n=>'₹'+(n||0).toLocaleString('en-IN');
+const td=()=>new Date().toISOString().split('T')[0];
+const pd=p=>(p.payments||[]).reduce((a,v)=>a+(v.amount||0),0);
+const pn=p=>(p.budget||0)-pd(p);
+const ex=p=>(p.expenses||[]).reduce((a,e)=>a+(e.amount||0),0);
+const opts=(a,s)=>a.map(v=>`<option value="${v}"${v===s?' selected':''}>${v}</option>`).join('');
+function cic(svg,color){return svg.replace(/currentColor/g,color)}
+
+function tst(m,ok=true){const t=document.createElement('div');t.className='tst';t.style.background=ok?'linear-gradient(135deg,#059669,#10b981)':'linear-gradient(135deg,#dc2626,#ef4444)';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2500)}
+
+function daysLeft(d){if(!d)return null;const diff=Math.ceil((new Date(d)-new Date())/(1000*60*60*24));return diff}
+function dlClass(d){const dl=daysLeft(d);if(dl===null)return'tl';if(dl<0)return'tr';if(dl<=3)return'tr';if(dl<=7)return'tc';return'tg'}
+function dlText(d){const dl=daysLeft(d);if(dl===null)return'No deadline';if(dl<0)return Math.abs(dl)+'d overdue';if(dl===0)return'Due today';return dl+'d left'}
+
+// UI BUILDERS
+function buildSidebar(){
+    const bn=D.brand?.name||'DesignFolio',bl=D.brand?.logo;
+    $('sidebar').innerHTML=`
+        <div class="side-logo">
+            <div class="side-li">${bl?'<img src="'+bl+'" alt="">':bn.charAt(0)}</div>
+            <div><div class="side-bn">${bn}</div><div class="side-sb">Design Studio</div></div>
+        </div>
+        <nav class="side-nv">
+            <button onclick="go('dash')" id="sb-dash" class="side-bt ${pg==='dash'?'on':''}">${ic(_.grid)} Dashboard</button>
+            <button onclick="go('clients')" id="sb-clients" class="side-bt ${pg==='clients'?'on':''}">${ic(_.users)} Clients</button>
+            <button onclick="go('projects')" id="sb-projects" class="side-bt ${pg==='projects'?'on':''}">${ic(_.layers)} Projects</button>
+            <button onclick="go('settings')" id="sb-settings" class="side-bt ${pg==='settings'?'on':''}">${ic(_.settings)} Settings</button>
+        </nav>
+        <div class="side-ft">
+            <button onclick="syn()" class="btn btn-o btn-f mb8">${ic(_.refresh,'s')} Sync</button>
+            <div class="fc" style="gap:8px;padding:0 8px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--grn);flex-shrink:0;"></div><span class="ts tm" id="syS">Connected</span></div>
+        </div>`;
+}
+function buildHeader(){
+    const bn=D.brand?.name||'DesignFolio',bl=D.brand?.logo;
+    const title={dash:'Dashboard',clients:'Clients',projects:'Projects',settings:'Settings'}[pg]||'Dashboard';
+    $('hdrBar').innerHTML=`
+        <div class="hdr-logo mob">${bl?'<img src="'+bl+'" alt="">':bn.charAt(0)}</div>
+        <div class="f1 trn"><span class="hdr-t">${title}</span></div>
+        <button onclick="syn()" class="hdr-btn mob">${ic(_.refresh)}</button>
+        <button onclick="oClient()" class="btn btn-b btn-s dsk">${ic(_.plus,'xs')} New Client</button>`;
+}
+function buildSearchBar(){
+    const sb=$('srchB');
+    sb.style.display=(pg==='clients'||pg==='projects')?'block':'none';
+    sb.innerHTML=`<div style="position:relative;">
+        <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);">${ic(_.search,'s')}</span>
+        <input type="text" oninput="doSrch(this.value)" placeholder="Search..." class="fld-i" style="padding-left:38px;" value="${sq}">
+    </div>`;
+}
+function buildNav(){
+    $('navBar').innerHTML=`
+        <button onclick="go('dash')" id="mn-dash" class="nav-b ${pg==='dash'?'on':''}">${ic(_.grid,'l')}<span>Home</span></button>
+        <button onclick="go('clients')" id="mn-clients" class="nav-b ${pg==='clients'?'on':''}">${ic(_.users,'l')}<span>Clients</span></button>
+        <button onclick="oClient()" class="nav-fab">${ic(_.plus,'l')}</button>
+        <button onclick="go('projects')" id="mn-projects" class="nav-b ${pg==='projects'?'on':''}">${ic(_.layers,'l')}<span>Projects</span></button>
+        <button onclick="go('settings')" id="mn-settings" class="nav-b ${pg==='settings'?'on':''}">${ic(_.settings,'l')}<span>Settings</span></button>`;
+}
+
+// GITHUB
+async function testGH(){const u=$('ghU').value.trim(),r=$('ghR').value.trim(),t=$('ghT').value.trim(),rs=$('tR');rs.style.display='block';if(!u||!r||!t){rs.style.background='#fef2f2';rs.style.color='#dc2626';rs.textContent='❌ Fill all fields';return}rs.style.background='#fffbeb';rs.style.color='#92400e';rs.textContent='Testing...';try{let x=await fetch('https://api.github.com/user',{headers:{Authorization:'token '+t}});if(!x.ok)throw'Invalid token';x=await fetch(`https://api.github.com/repos/${u}/${r}`,{headers:{Authorization:'token '+t}});if(!x.ok)throw'Repo not found';rs.style.background='#ecfdf5';rs.style.color='#059669';rs.textContent='✅ Connected!'}catch(e){rs.style.background='#fef2f2';rs.style.color='#dc2626';rs.textContent='❌ '+e}}
+async function pull(){if(!gh)return null;try{const r=await fetch(`https://api.github.com/repos/${gh.u}/${gh.r}/contents/${FL}`,{headers:{Authorization:'token '+gh.t},cache:'no-store'});if(r.status===200){const j=await r.json();sha=j.sha;return JSON.parse(decodeURIComponent(escape(atob(j.content))))}}catch(e){console.error(e)}return null}
+async function push(){if(!gh)return false;try{const b={message:'DesignFolio '+new Date().toLocaleString(),content:btoa(unescape(encodeURIComponent(JSON.stringify(D,null,2))))};if(sha)b.sha=sha;const r=await fetch(`https://api.github.com/repos/${gh.u}/${gh.r}/contents/${FL}`,{method:'PUT',headers:{Authorization:'token '+gh.t,'Content-Type':'application/json'},body:JSON.stringify(b)});if(r.ok){sha=(await r.json()).content.sha;return true}}catch(e){console.error(e)}return false}
+async function syn(){$('syB').style.display='block';const d=await pull();if(d){D=d;if(!D.brand)D.brand={name:'DesignFolio',logo:null};if(!D.clients)D.clients=[];localStorage.setItem('df',JSON.stringify(D));render();tst('Synced!')}$('syB').style.display='none';const s=$('syS');if(s)s.textContent='Synced just now'}
+async function sav(){localStorage.setItem('df',JSON.stringify(D));$('syB').style.display='block';const ok=await push();$('syB').style.display='none';tst(ok?'Saved!':'Save failed',ok)}
+
+async function conGH(){const u=$('ghU').value.trim(),r=$('ghR').value.trim(),t=$('ghT').value.trim();if(!u||!r||!t){tst('Fill all fields',false);return}$('conBtn').textContent='Connecting...';$('conBtn').disabled=true;gh={u,r,t};localStorage.setItem('dgh',JSON.stringify(gh));const d=await pull();if(d){D=d;if(!D.brand)D.brand={name:'DesignFolio',logo:null};if(!D.clients)D.clients=[]}else await push();localStorage.setItem('df',JSON.stringify(D));$('setup').style.display='none';$('app').classList.add('show');go('dash');tst('Welcome to your studio!')}
+
+async function init(){
+    try{const sg=localStorage.getItem('dgh');if(sg)gh=JSON.parse(sg);const sc=localStorage.getItem('df');if(sc){D=JSON.parse(sc);if(!D.brand)D.brand={name:'DesignFolio',logo:null};if(!D.clients)D.clients=[]}}catch(e){}
+    if(!gh){$('splash').classList.add('hide');$('setup').style.display='block';return}
+    $('splashText').textContent='Syncing studio...';
+    try{const d=await pull();if(d){D=d;if(!D.brand)D.brand={name:'DesignFolio',logo:null};if(!D.clients)D.clients=[];localStorage.setItem('df',JSON.stringify(D))}}catch(e){}
+    $('splash').classList.add('hide');$('app').classList.add('show');go('dash');
+    setInterval(()=>{if(gh)syn()},120000);
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden&&gh)syn()})
+}
+
+function go(p){pg=p;sq='';sf='all';$('mainS').scrollTop=0;render()}
+function doSrch(v){sq=v.toLowerCase();renderContent()}
+function render(){buildSidebar();buildHeader();buildSearchBar();buildNav();renderContent()}
+function renderContent(){const c=$('cnt');if(pg==='dash')rDash(c);else if(pg==='clients')rClients(c);else if(pg==='projects')rProjects(c);else if(pg==='settings')rSet(c)}
+
+// Get all projects flat
+function allPj(){const r=[];(D.clients||[]).forEach(c=>(c.projects||[]).forEach(p=>r.push({...p,clientName:c.name,clientId:c.id,clientPhone:c.phone})));return r}
+
+// DASHBOARD
+function rDash(el){
+    const pjs=allPj();
+    let col=0,pen=0,exp=0;
+    pjs.forEach(p=>{col+=pd(p);pen+=pn(p);exp+=ex(p)});
+    const profit=col-exp;
+    const active=pjs.filter(p=>!['Delivered','Cancelled'].includes(p.status));
+    const overdue=active.filter(p=>daysLeft(p.deadline)<0);
+    const revisions=pjs.reduce((a,p)=>a+(p.revisions||0),0);
+    const byStatus={};PS.forEach(s=>{byStatus[s]=pjs.filter(p=>p.status===s).length});
+
+    el.innerHTML=`
+        <div class="g4 mb16">
+            <div class="st"><div class="st-ic" style="background:#ecfdf5;">${ic(cic(_.up,'#059669'))}</div><div class="st-lb">Collected</div><div class="st-vl tg">${inr(col)}</div></div>
+            <div class="st"><div class="st-ic" style="background:#fffbeb;">${ic(cic(_.clock,'#d97706'))}</div><div class="st-lb">Pending</div><div class="st-vl" style="color:#d97706;">${inr(pen)}</div></div>
+            <div class="st"><div class="st-ic" style="background:#fef2f2;">${ic(cic(_.dn,'#dc2626'))}</div><div class="st-lb">Expenses</div><div class="st-vl tr">${inr(exp)}</div></div>
+            <div class="st"><div class="st-ic" style="background:rgba(124,58,237,.1);">${ic(cic(_.wallet,'#7c3aed'))}</div><div class="st-lb">Profit</div><div class="st-vl tc">${inr(profit)}</div></div>
+        </div>
+        <div class="g2 mb16">
+            <div class="cd cd-p" style="background:linear-gradient(135deg,var(--b),var(--b2));color:#fff;">
+                <div class="fc" style="gap:8px;margin-bottom:8px;opacity:.8;">${ic(_.layers,'s')}<span class="tsm">Active Projects</span></div>
+                <div class="st-vl">${active.length}</div>
+                ${overdue.length?'<div class="ts mt8" style="opacity:.9;">⚠️ '+overdue.length+' overdue</div>':''}
+            </div>
+            <div class="cd cd-p">
+                <div class="fc" style="gap:8px;margin-bottom:8px;color:var(--t3);">${ic(_.rev,'s')}<span class="tsm">Total Revisions</span></div>
+                <div class="st-vl">${revisions}</div>
+                <div class="ts tl mt8">${D.clients?.length||0} clients</div>
+            </div>
+        </div>
+
+        <div class="cd cd-p mb12">
+            <div class="fb7 mb12">Project Pipeline</div>
+            <div class="g3 mb8">${PS.filter(s=>s!=='Cancelled').map(s=>`<div style="text-align:center;padding:10px;background:var(--bg);border-radius:10px;"><div class="bg ${SC[s]}" style="margin-bottom:6px;font-size:10px;">${s}</div><div class="fb8 tlg">${byStatus[s]||0}</div></div>`).join('')}</div>
+        </div>
+
+        ${overdue.length?`<div class="cd cd-p mb12" style="border-left:3px solid var(--red);">
+            <div class="fb7 tr mb12">⚠️ Overdue Projects</div>
+            ${overdue.map(p=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:#fef2f2;border-radius:10px;margin-bottom:6px;">
+                <div><div class="fb7">${p.name}</div><div class="ts tm">${p.clientName} • ${Math.abs(daysLeft(p.deadline))}d overdue</div></div>
+                <span class="bg bg-r">${p.status}</span>
+            </div>`).join('')}
+        </div>`:''}
+
+        <div class="cd cd-p mb12"><div class="fb7 mb12">Quick Actions</div><div class="g2">
+            <button onclick="oClient()" class="btn btn-o btn-f" style="justify-content:flex-start;">${ic(_.plus,'s')} New Client</button>
+            <button onclick="go('projects')" class="btn btn-o btn-f" style="justify-content:flex-start;">${ic(_.layers,'s')} All Projects</button>
+            <button onclick="syn()" class="btn btn-o btn-f" style="justify-content:flex-start;">${ic(_.refresh,'s')} Sync</button>
+            <button onclick="go('clients')" class="btn btn-o btn-f" style="justify-content:flex-start;">${ic(_.users,'s')} Clients</button>
+        </div></div>`;
+}
+
+// CLIENTS
+function rClients(el){
+    const all=D.clients||[];
+    const f=all.filter(c=>c.name.toLowerCase().includes(sq)||(c.projects||[]).some(p=>p.name.toLowerCase().includes(sq)));
+    if(!f.length){el.innerHTML=`<div class="cd emp"><div class="emp-ic">${ic(_.users)}</div><div class="fb7 tlg mb8">${all.length?'No matches':'No clients yet'}</div><div class="tm mb16">Add your first client</div><button onclick="oClient()" class="btn btn-b">${ic(_.plus,'xs')} Add Client</button></div>`;return}
+    el.innerHTML=f.map(c=>{
+        const pjs=c.projects||[];
+        const tv=pjs.reduce((a,p)=>a+(p.budget||0),0),tp=pjs.reduce((a,p)=>a+pd(p),0),tpn=tv-tp;
+        const active=pjs.filter(p=>!['Delivered','Cancelled'].includes(p.status)).length;
+        return`<div class="cd">
+            <div class="cd-p" style="border-bottom:1px solid var(--brd);">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                    <div class="av" style="width:48px;height:48px;font-size:18px;background:linear-gradient(135deg,var(--b),var(--b2));">${c.name.charAt(0)}</div>
+                    <div class="f1" style="min-width:0;"><div class="fb7 tlg trn">${c.name}</div><div class="ts tm trn">${c.contact||''} ${c.phone?'• +'+c.phone:''}</div></div>
+                </div>
+                <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;">
+                    <span class="bg bg-b">${pjs.length} projects</span>
+                    ${active?'<span class="bg bg-a">'+active+' active</span>':''}
+                    <span class="bg bg-g">Paid: ${inr(tp)}</span>
+                    ${tpn>0?'<span class="bg bg-r">Due: '+inr(tpn)+'</span>':''}
+                </div>
+                <div class="btn-r">
+                    <button onclick="oPj(${c.id})" class="btn btn-b btn-s">${ic(_.plus,'xs')} Project</button>
+                    <button onclick="wa(${c.id})" class="btn btn-gn btn-s">${ic(_.msg,'xs')} WhatsApp</button>
+                    <button onclick="gPDF(${c.id})" class="btn btn-g btn-s">${ic(_.file,'xs')} Invoice</button>
+                    <button onclick="eClient(${c.id})" class="btn btn-g btn-s">${ic(_.edit,'xs')} Edit</button>
+                    <button onclick="dClient(${c.id})" class="btn btn-rd btn-s">${ic(_.trash,'xs')}</button>
+                </div>
+            </div>
+            <div class="cd-p">${pjs.map(p=>rPjCard(c,p)).join('')}
+            ${!pjs.length?'<div class="ts tl" style="text-align:center;padding:20px;">No projects yet</div>':''}
+            </div></div>`;
+    }).join('')
+}
+
+// PROJECT CARD (reusable)
+function rPjCard(c,p){
+    const sp=pd(p),spn=pn(p),se=ex(p),spr=sp-se,done=p.status==='Delivered';
+    return`<div class="pj">
+        <div class="fb mb8">
+            <div style="flex:1;min-width:0;">
+                <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <span class="fb7">${p.name}</span>
+                    <span class="bg ${SC[p.status]||'bg-b'}" style="font-size:10px;">${p.status}</span>
+                    ${p.portfolio?'<span class="bg bg-pk" style="font-size:9px;">★ Portfolio</span>':''}
+                </div>
+                <div class="ts tl mt8">${p.type||'Design'} • Rev: ${p.revisions||0}</div>
+                ${p.deadline?`<div class="ts ${dlClass(p.deadline)} mt8">${ic(_.cal,'xs')} ${dlText(p.deadline)}</div>`:''}
+            </div>
+        </div>
+        <div class="btn-r mb8">
+            <button onclick="oStatus(${c.id},${p.id})" class="btn btn-o btn-s">${ic(_.flag,'xs')} Status</button>
+            ${!done?`<button onclick="oPay(${c.id},${p.id})" class="btn btn-b btn-s">+ Pay</button>`:''}
+            <button onclick="oExpP(${c.id},${p.id})" class="btn btn-rd btn-s">+ Exp</button>
+            <button onclick="oDeliv(${c.id},${p.id})" class="btn btn-g btn-s">${ic(_.pkg,'xs')} Files</button>
+            <button onclick="gSvcPDF(${c.id},${p.id})" class="btn btn-g btn-s">${ic(_.dl,'xs')}</button>
+        </div>
+        <div class="pj-gr">
+            <div class="pj-cl"><div class="pj-cl-l">Budget</div><div class="pj-cl-v">${inr(p.budget)}</div></div>
+            <div class="pj-cl"><div class="pj-cl-l">Received</div><div class="pj-cl-v tg">${inr(sp)}</div></div>
+            <div class="pj-cl"><div class="pj-cl-l">Expenses</div><div class="pj-cl-v tr">${inr(se)}</div></div>
+            <div class="pj-cl"><div class="pj-cl-l">Profit</div><div class="pj-cl-v tc">${inr(spr)}</div></div>
+        </div>
+        ${(p.deliverables||[]).length?`<div style="margin-top:8px;">${(p.deliverables||[]).map(d=>`<span class="dv-tag">${ic(_.file,'xs')} ${d}</span>`).join('')}</div>`:''}
+        ${p.notes?`<div class="hi mt8"><div class="ts tm">${p.notes}</div></div>`:''}
+        ${(p.payments||[]).length>0?`<div class="hi mt8"><div class="ts fb7 tm mb8">Payments</div>${(p.payments||[]).map((v,i)=>`<div class="hi-row"><span class="tm f1" style="min-width:0;">${i===0?'<b class="tc">Adv</b>':'Pay'}: ${inr(v.amount)} • ${v.date} • ${v.mode}</span><button class="hi-del" onclick="dPay(${c.id},${p.id},${v.id})">${ic(_.x,'xs')}</button></div>`).join('')}</div>`:''}
+        ${(p.expenses||[]).length>0?`<div class="hi-r mt8"><div class="ts fb7 tr mb8">Expenses</div>${(p.expenses||[]).map(e=>`<div class="hi-row"><span class="tm f1" style="min-width:0;">${e.desc}: ${inr(e.amount)} • ${e.date}</span><button class="hi-del" onclick="dExp(${c.id},${p.id},${e.id})">${ic(_.x,'xs')}</button></div>`).join('')}</div>`:''}
+    </div>`;
+}
+
+// PROJECTS VIEW (all projects across clients)
+function rProjects(el){
+    const pjs=allPj();
+    const f=pjs.filter(p=>(sf==='all'||p.status===sf)&&(p.name.toLowerCase().includes(sq)||p.clientName.toLowerCase().includes(sq)));
+    el.innerHTML=`
+        <div class="pipe mb16">${['all',...PS].map(s=>`<div class="pipe-i ${sf===s?'on':''} ${s!=='all'?(SC[s]||''):'bg-b'}" onclick="sf='${s}';renderContent()">${s==='all'?'All ('+pjs.length+')':s+' ('+pjs.filter(p=>p.status===s).length+')'}</div>`).join('')}</div>
+        ${!f.length?`<div class="cd emp"><div class="emp-ic">${ic(_.layers)}</div><div class="fb7 tlg mb8">No projects</div></div>`:
+        f.map(p=>{const c=D.clients.find(x=>x.id===p.clientId);return c?`<div class="cd"><div class="cd-p"><div class="ts tl mb4">${p.clientName}</div>${rPjCard(c,p)}</div></div>`:''}).join('')}`;
+}
+
+// SETTINGS
+function rSet(el){
+    const bn=D.brand?.name||'DesignFolio',bl=D.brand?.logo;
+    el.innerHTML=`<div style="max-width:480px;margin:0 auto;">
+        <div class="cd cd-p mb12"><div class="fb7 mb16" style="display:flex;align-items:center;gap:8px;">${ic(_.palette,'s')} Studio Branding</div>
+            <div class="fld"><label class="fld-l">Studio Name</label><input type="text" id="bN" value="${bn}" class="fld-i"></div>
+            <div class="fld"><label class="fld-l">Logo</label><div style="display:flex;align-items:center;gap:12px;"><div class="slogo" style="animation:none;width:56px;height:56px;font-size:22px;border-radius:16px;">${bl?'<img src="'+bl+'" style="width:100%;height:100%;object-fit:cover;border-radius:16px;" alt="">':(bn.charAt(0))}</div><div class="f1"><input type="file" id="lF" accept="image/*" onchange="uLogo(this)" style="display:none;"><button onclick="document.getElementById('lF').click()" class="btn btn-g btn-s btn-f mb8">${ic(_.ul,'xs')} Upload</button>${bl?'<button onclick="rLogo()" class="btn btn-rd btn-s btn-f">Remove</button>':''}</div></div></div>
+            <button onclick="sBrand()" class="btn btn-b btn-f">${ic(_.save,'s')} Save</button>
+        </div>
+        <div class="cd cd-p mb12"><div class="fb7 mb16" style="display:flex;align-items:center;gap:8px;">${ic(_.cloud,'s')} Sync</div><div style="display:flex;align-items:center;gap:8px;padding:12px;background:#ecfdf5;border-radius:12px;margin-bottom:12px;"><div style="width:8px;height:8px;border-radius:50%;background:var(--grn);"></div><span class="tsm" style="color:var(--grn);font-weight:600;">Connected to ${gh?.u||''}/${gh?.r||''}</span></div><button onclick="syn()" class="btn btn-g btn-f">${ic(_.refresh,'s')} Force Sync</button></div>
+        <div class="cd cd-p mb12"><div class="fb7 mb16" style="display:flex;align-items:center;gap:8px;">${ic(_.db,'s')} Data</div><div class="g2"><button onclick="expD()" class="btn btn-g">${ic(_.dl,'xs')} Export</button><input type="file" id="iF" accept=".json" onchange="impD(this)" style="display:none;"><button onclick="document.getElementById('iF').click()" class="btn btn-g">${ic(_.ul,'xs')} Import</button></div></div>
+        <div class="cd cd-p" style="border:2px solid #fecaca;"><div class="fb7 tr mb16" style="display:flex;align-items:center;gap:8px;">${ic(_.warn,'s')} Danger</div><button onclick="disc()" class="btn btn-rd btn-f">${ic(_.logout,'s')} Disconnect</button></div>
+    </div>`
+}
+
+// SETTINGS FUNCS
+function uLogo(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{D.brand=D.brand||{};D.brand.logo=e.target.result;render();tst('Logo uploaded')};r.readAsDataURL(f)}
+function rLogo(){D.brand.logo=null;render();tst('Removed')}
+async function sBrand(){D.brand=D.brand||{};D.brand.name=$('bN').value.trim()||'DesignFolio';await sav();render()}
+function expD(){const b=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='designfolio_'+td()+'.json';a.click();tst('Exported!')}
+async function impD(i){const f=i.files[0];if(!f)return;const r=new FileReader();r.onload=async e=>{try{const d=JSON.parse(e.target.result);if(d.clients)D.clients=d.clients;if(d.brand)D.brand=d.brand;await sav();render();tst('Imported!')}catch(err){tst('Invalid',false)}};r.readAsText(f);i.value=''}
+function disc(){if(!confirm('Disconnect?'))return;localStorage.removeItem('dgh');location.reload()}
+
+// MODAL
+function cMo(){$('mo').classList.remove('show')}
+function sMo(h){$('moC').innerHTML='<div class="mo-h"></div>'+h;$('mo').classList.add('show')}
+
+// CLIENT
+function oClient(c){
+    c=c||null;
+    sMo(`<div class="mo-t">${c?'Edit':'New'} Client</div><div class="mo-s">${c?'Update':'Add a new client to your studio'}</div>
+        <input type="hidden" id="cId" value="${c?.id||''}">
+        <div class="g2 mb12"><div class="fld"><label class="fld-l">Name *</label><input type="text" id="cN" value="${c?.name||''}" class="fld-i" placeholder="Client / Company"></div><div class="fld"><label class="fld-l">Contact Person</label><input type="text" id="cC" value="${c?.contact||''}" class="fld-i" placeholder="Name"></div></div>
+        <div class="g2 mb12"><div class="fld"><label class="fld-l">Phone</label><input type="text" id="cP" value="${c?.phone||'91'}" class="fld-i" placeholder="91XXXXXXXXXX"></div><div class="fld"><label class="fld-l">Email</label><input type="email" id="cE" value="${c?.email||''}" class="fld-i" placeholder="email@co.com"></div></div>
+        <div class="fld"><label class="fld-l">Source / Referral</label><input type="text" id="cS" value="${c?.source||''}" class="fld-i" placeholder="Instagram, referral, etc."></div>
+        <button onclick="svClient()" class="btn btn-b btn-f">${ic(_.check,'s')} ${c?'Update':'Add'} Client</button>`)
+}
+async function svClient(){const n=$('cN').value.trim();if(!n){tst('Enter name',false);return}const id=$('cId').value;if(id){const i=D.clients.findIndex(x=>x.id===parseInt(id));if(i>=0){D.clients[i].name=n;D.clients[i].contact=$('cC').value.trim();D.clients[i].phone=$('cP').value.trim();D.clients[i].email=$('cE').value.trim();D.clients[i].source=$('cS').value.trim()}}else{D.clients.push({id:Date.now(),name:n,contact:$('cC').value.trim(),phone:$('cP').value.trim(),email:$('cE').value.trim(),source:$('cS').value.trim(),projects:[]})}cMo();await sav();render()}
+function eClient(id){oClient(D.clients.find(c=>c.id===id))}
+async function dClient(id){if(!confirm('Delete client & all projects?'))return;D.clients=D.clients.filter(c=>c.id!==id);await sav();render()}
+
+// PROJECT
+function oPj(cid,p){
+    p=p||null;const c=D.clients.find(x=>x.id===cid);if(!c)return;
+    sMo(`<div class="mo-t">${p?'Edit':'New'} Project</div><div class="mo-s">${c.name}</div>
+        <input type="hidden" id="pjCid" value="${cid}">
+        <input type="hidden" id="pjId" value="${p?.id||''}">
+        <div class="fld"><label class="fld-l">Project Name *</label><input type="text" id="pjN" value="${p?.name||''}" class="fld-i" placeholder="Logo Redesign, Brand Kit..."></div>
+        <div class="g2 mb12"><div class="fld"><label class="fld-l">Type</label><select id="pjT" class="fld-i">${opts(PT,p?.type)}</select></div><div class="fld"><label class="fld-l">Status</label><select id="pjS" class="fld-i">${opts(PS,p?.status||'Brief')}</select></div></div>
+        <div class="g2 mb12"><div class="fld"><label class="fld-l">Budget ₹ *</label><input type="number" id="pjB" value="${p?.budget||''}" class="fld-i" placeholder="0"></div><div class="fld"><label class="fld-l">Advance ₹</label><input type="number" id="pjA" value="" class="fld-i" placeholder="0"></div></div>
+        <div class="g2 mb12"><div class="fld"><label class="fld-l">Deadline</label><input type="date" id="pjDl" value="${p?.deadline||''}" class="fld-i"></div><div class="fld"><label class="fld-l">Payment Mode</label><select id="pjM" class="fld-i">${opts(PM)}</select></div></div>
+        <div class="fld"><label class="fld-l">Revisions Included</label><input type="number" id="pjR" value="${p?.maxRevisions||3}" class="fld-i" placeholder="3"></div>
+        <div class="fld"><label class="fld-l">Notes / Brief</label><textarea id="pjNo" class="fld-i" placeholder="Client brief, references, color preferences...">${p?.notes||''}</textarea></div>
+        <div class="fld"><label class="fld-l" style="display:flex;align-items:center;gap:6px;"><input type="checkbox" id="pjPf" ${p?.portfolio?'checked':''}> Add to Portfolio</label></div>
+        <button onclick="svPj()" class="btn btn-b btn-f">${ic(_.check,'s')} ${p?'Update':'Create'} Project</button>`)
+}
+async function svPj(){
+    const cid=parseInt($('pjCid').value),pid=$('pjId').value,n=$('pjN').value.trim(),b=parseInt($('pjB').value)||0;
+    if(!n){tst('Enter project name',false);return}if(b<=0){tst('Enter budget',false);return}
+    const c=D.clients.find(x=>x.id===cid);if(!c)return;if(!c.projects)c.projects=[];
+    const adv=parseInt($('pjA').value)||0;
+    if(pid){
+        const p=c.projects.find(x=>x.id===parseInt(pid));
+        if(p){p.name=n;p.type=$('pjT').value;p.status=$('pjS').value;p.budget=b;p.deadline=$('pjDl').value;p.maxRevisions=parseInt($('pjR').value)||3;p.notes=$('pjNo').value.trim();p.portfolio=$('pjPf').checked}
+    }else{
+        c.projects.push({id:Date.now(),name:n,type:$('pjT').value,status:$('pjS').value,budget:b,deadline:$('pjDl').value,maxRevisions:parseInt($('pjR').value)||3,revisions:0,notes:$('pjNo').value.trim(),portfolio:$('pjPf').checked,payments:adv>0?[{id:Date.now(),amount:adv,date:td(),mode:$('pjM').value}]:[],expenses:[],deliverables:[]})
+    }
+    cMo();await sav();render()
+}
+
+// STATUS
+function oStatus(cid,pid){
+    const c=D.clients.find(x=>x.id===cid);const p=c?.projects?.find(x=>x.id===pid);if(!p)return;
+    sMo(`<div class="mo-t">Update Status</div><div class="mo-s">${p.name}</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px;">${PS.map(s=>`<button onclick="setStatus(${cid},${pid},'${s}')" class="btn ${p.status===s?'btn-b':'btn-o'} btn-f" style="justify-content:flex-start;"><span class="bg ${SC[s]}" style="margin-right:8px;">${s}</span>${s===p.status?'← Current':''}</button>`).join('')}</div>
+        <div class="fld"><label class="fld-l">Revisions Used</label>
+            <div class="rev-cnt"><button class="rev-btn" onclick="adjRev(${cid},${pid},-1)">−</button><span class="rev-num" id="revN">${p.revisions||0}</span><span class="ts tl">/ ${p.maxRevisions||3}</span><button class="rev-btn" onclick="adjRev(${cid},${pid},1)">+</button></div>
+        </div>`)
+}
+async function setStatus(cid,pid,s){const p=D.clients.find(x=>x.id===cid)?.projects?.find(x=>x.id===pid);if(!p)return;p.status=s;if(s==='Revision')p.revisions=(p.revisions||0)+1;cMo();await sav();render()}
+async function adjRev(cid,pid,d){const p=D.clients.find(x=>x.id===cid)?.projects?.find(x=>x.id===pid);if(!p)return;p.revisions=Math.max(0,(p.revisions||0)+d);const el=$('revN');if(el)el.textContent=p.revisions;await sav()}
+
+// DELIVERABLES
+function oDeliv(cid,pid){
+    const c=D.clients.find(x=>x.id===cid);const p=c?.projects?.find(x=>x.id===pid);if(!p)return;
+    sMo(`<div class="mo-t">Deliverables</div><div class="mo-s">${p.name}</div>
+        <div class="fld"><label class="fld-l">Add Deliverable</label><select id="dvS" class="fld-i">${opts(DL)}</select></div>
+        <button onclick="addDeliv(${cid},${pid})" class="btn btn-o btn-f mb16">${ic(_.plus,'xs')} Add</button>
+        <div id="dvL">${(p.deliverables||[]).map((d,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:10px;background:var(--bg);border-radius:10px;margin-bottom:6px;"><span class="tsm">${ic(_.file,'xs')} ${d}</span><button class="hi-del" onclick="rmDeliv(${cid},${pid},${i})">${ic(_.x,'xs')}</button></div>`).join('')}</div>`)
+}
+async function addDeliv(cid,pid){const p=D.clients.find(x=>x.id===cid)?.projects?.find(x=>x.id===pid);if(!p)return;if(!p.deliverables)p.deliverables=[];p.deliverables.push($('dvS').value);await sav();oDeliv(cid,pid)}
+async function rmDeliv(cid,pid,i){const p=D.clients.find(x=>x.id===cid)?.projects?.find(x=>x.id===pid);if(!p)return;p.deliverables.splice(i,1);await sav();oDeliv(cid,pid)}
+
+// PAYMENT
+function oPay(cid,pid){const c=D.clients.find(x=>x.id===cid);const p=c?.projects?.find(x=>x.id===pid);if(!p)return;sMo(`<div class="mo-t">Record Payment</div><div class="mo-s">${c.name} — ${p.name}</div><div class="g2 mb12"><div class="fld"><label class="fld-l">Amount ₹</label><input type="number" id="pA" value="${pn(p)}" class="fld-i"></div><div class="fld"><label class="fld-l">Date</label><input type="date" id="pD" value="${td()}" class="fld-i"></div></div><div class="fld"><label class="fld-l">Mode</label><select id="pM" class="fld-i">${opts(PM)}</select></div><button onclick="svPay(${cid},${pid})" class="btn btn-b btn-f">${ic(_.check,'s')} Record</button>`)}
+async function svPay(cid,pid){const a=parseInt($('pA').value)||0;if(a<=0){tst('Enter amount',false);return}const p=D.clients.find(c=>c.id===cid)?.projects?.find(x=>x.id===pid);if(!p)return;if(!p.payments)p.payments=[];p.payments.push({id:Date.now(),amount:a,date:$('pD').value,mode:$('pM').value});cMo();await sav();render()}
+async function dPay(cid,pid,vid){if(!confirm('Delete?'))return;const p=D.clients.find(c=>c.id===cid)?.projects?.find(x=>x.id===pid);if(p){p.payments=(p.payments||[]).filter(v=>v.id!==vid);await sav();render()}}
+
+// EXPENSE
+function oExpP(cid,pid){const c=D.clients.find(x=>x.id===cid);const p=c?.projects?.find(x=>x.id===pid);if(!p)return;sMo(`<div class="mo-t">Add Expense</div><div class="mo-s">${c.name} — ${p.name}</div><div class="fld"><label class="fld-l">Description</label><input type="text" id="eD" class="fld-i" placeholder="Stock photos, fonts, printing..."></div><div class="g2 mb12"><div class="fld"><label class="fld-l">Amount ₹</label><input type="number" id="eA" class="fld-i" placeholder="0"></div><div class="fld"><label class="fld-l">Date</label><input type="date" id="eDt" value="${td()}" class="fld-i"></div></div><button onclick="svExpP(${cid},${pid})" class="btn btn-b btn-f">${ic(_.check,'s')} Add Expense</button>`)}
+async function svExpP(cid,pid){const a=parseInt($('eA').value)||0;if(a<=0){tst('Enter amount',false);return}const p=D.clients.find(c=>c.id===cid)?.projects?.find(x=>x.id===pid);if(!p)return;if(!p.expenses)p.expenses=[];p.expenses.push({id:Date.now(),amount:a,desc:$('eD').value.trim()||'Expense',date:$('eDt').value});cMo();await sav();render()}
+async function dExp(cid,pid,eid){if(!confirm('Delete?'))return;const p=D.clients.find(c=>c.id===cid)?.projects?.find(x=>x.id===pid);if(p){p.expenses=(p.expenses||[]).filter(e=>e.id!==eid);await sav();render()}}
+
+// WHATSAPP
+function wa(cid){const c=D.clients.find(x=>x.id===cid);if(!c)return;const pjs=c.projects||[];let m=`Hi ${c.contact||c.name},\n\nProject update from ${D.brand?.name||'DesignFolio'}:\n\n`;pjs.forEach(p=>{const rem=pn(p);m+=`🎨 ${p.name}\n   Status: ${p.status}${p.deadline?' | Deadline: '+p.deadline:''}${rem>0?' | Due: '+inr(rem):' | ✅ Paid'}\n\n`});const due=pjs.reduce((a,p)=>a+pn(p),0);if(due>0)m+=`💰 Total Due: ${inr(due)}\n`;m+=`\n— ${D.brand?.name||'DesignFolio'}`;const ph=(c.phone||'').replace(/\D/g,'');window.open(`https://wa.me/${ph||''}?text=${encodeURIComponent(m)}`,'_blank')}
+
+// PDF
+function loadJS(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+async function ensurePDF(){if(!window.jspdf){tst('Loading PDF...');await loadJS('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');await loadJS('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js')}}
+
+async function gPDF(cid){
+    const c=D.clients.find(x=>x.id===cid);if(!c)return;await ensurePDF();
+    try{const{jsPDF}=window.jspdf;const doc=new jsPDF();const bn=D.brand?.name||'DesignFolio';
+    doc.setFillColor(124,58,237);doc.rect(0,0,210,42,'F');doc.setFillColor(168,85,247);doc.rect(0,38,210,4,'F');
+    doc.setTextColor(255);doc.setFontSize(22);doc.setFont('helvetica','bold');doc.text(bn,20,24);
+    doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('INVOICE',170,18);doc.setFontSize(8);doc.text('Date: '+new Date().toLocaleDateString('en-IN'),170,24);
+    doc.setTextColor(50,50,50);doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('Bill To:',20,54);doc.setFont('helvetica','normal');let y=62;doc.text(c.name,20,y);y+=7;if(c.contact){doc.text(c.contact,20,y);y+=6}if(c.phone){doc.text('+'+c.phone,20,y);y+=6}
+    const rows=(c.projects||[]).map(p=>[p.name,p.type||'',p.status,inr(p.budget),inr(pd(p)),inr(pn(p))]);
+    doc.autoTable({startY:85,head:[['Project','Type','Status','Budget','Paid','Due']],body:rows,theme:'striped',headStyles:{fillColor:[124,58,237]},styles:{fontSize:9}});
+    const fy=doc.lastAutoTable.finalY+12;const tv=(c.projects||[]).reduce((a,p)=>a+(p.budget||0),0),tp=(c.projects||[]).reduce((a,p)=>a+pd(p),0);
+    doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text('Total: '+inr(tv),130,fy);doc.setTextColor(5,150,105);doc.text('Paid: '+inr(tp),130,fy+8);if(tv-tp>0){doc.setTextColor(220,38,38);doc.text('DUE: '+inr(tv-tp),130,fy+16)}
+    doc.setDrawColor(124,58,237);doc.line(20,280,190,280);doc.setTextColor(150);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('Generated by '+bn,20,286);
+    doc.save(c.name.replace(/\s+/g,'_')+'_invoice.pdf');tst('Saved!')}catch(e){console.error(e);tst('Failed',false)}
+}
+
+async function gSvcPDF(cid,pid){
+    const c=D.clients.find(x=>x.id===cid);if(!c)return;const p=c.projects?.find(x=>x.id===pid);if(!p)return;await ensurePDF();
+    try{const{jsPDF}=window.jspdf;const doc=new jsPDF();const bn=D.brand?.name||'DesignFolio';const sp=pd(p),spn=pn(p),se=ex(p);
+    doc.setFillColor(124,58,237);doc.rect(0,0,210,42,'F');doc.setFillColor(168,85,247);doc.rect(0,38,210,4,'F');
+    doc.setTextColor(255);doc.setFontSize(22);doc.setFont('helvetica','bold');doc.text(bn,20,20);doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text('PROJECT BILL',160,18);doc.setFontSize(8);doc.text(p.name,160,26);doc.text('Date: '+new Date().toLocaleDateString('en-IN'),160,32);
+    doc.setTextColor(50,50,50);doc.setFontSize(11);doc.setFont('helvetica','bold');doc.text('Client:',20,54);doc.setFont('helvetica','normal');doc.text(c.name,20,62);
+    let y=75;doc.setFillColor(245,240,255);doc.roundedRect(18,y-4,174,30,4,4,'F');doc.setTextColor(124,58,237);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text(p.name,24,y+6);doc.setTextColor(100);doc.setFontSize(10);doc.setFont('helvetica','normal');doc.text(p.type+' | '+p.status+' | Rev: '+(p.revisions||0),24,y+18);y+=38;
+    doc.autoTable({startY:y,head:[['','Amount']],body:[['Budget',inr(p.budget)],['Received',inr(sp)],['Pending',inr(spn)],['Expenses',inr(se)],['Profit',inr(sp-se)]],theme:'plain',headStyles:{fillColor:[124,58,237],textColor:255},styles:{fontSize:10,cellPadding:6}});
+    let ty=doc.lastAutoTable.finalY+10;
+    if((p.payments||[]).length){doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(50);doc.text('Payments',20,ty);ty+=4;doc.autoTable({startY:ty,head:[['#','Date','Mode','Amount']],body:(p.payments||[]).map((v,i)=>[i===0?'Advance':'Pay '+(i+1),v.date,v.mode,inr(v.amount)]),theme:'striped',headStyles:{fillColor:[5,150,105]},styles:{fontSize:9}});ty=doc.lastAutoTable.finalY+10}
+    if((p.deliverables||[]).length){doc.setFont('helvetica','bold');doc.text('Deliverables',20,ty);ty+=6;(p.deliverables||[]).forEach(d=>{doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text('• '+d,24,ty);ty+=5})}
+    doc.setDrawColor(124,58,237);doc.line(20,280,190,280);doc.setTextColor(150);doc.setFontSize(8);doc.setFont('helvetica','normal');doc.text('Generated by '+bn,20,286);
+    doc.save(c.name.replace(/\s+/g,'_')+'_'+p.name.replace(/\s+/g,'_')+'.pdf');tst('Saved!')}catch(e){console.error(e);tst('Failed',false)}
+}
+
+init();
+</script>
+</body>
+</html>
